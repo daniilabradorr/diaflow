@@ -1,0 +1,15 @@
+name: Feature request
+description: Propón una nueva funcionalidad
+title: "[feat]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: ¿Qué problema resuelve?
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: ¿Qué te gustaría que hiciera?

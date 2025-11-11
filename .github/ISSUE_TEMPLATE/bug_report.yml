@@ -1,0 +1,25 @@
+name: Bug report
+description: Reporta un problema
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: Descripción
+      description: Qué está pasando
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      description: Qué pasos seguir para ver el bug
+  - type: input
+    id: expected
+    attributes:
+      label: Comportamiento esperado
+  - type: input
+    id: env
+    attributes:
+      label: Entorno (OS, Python, etc.)
