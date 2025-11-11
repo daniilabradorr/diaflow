@@ -70,27 +70,12 @@ AUTH_PASSWORD_VALIDATORS = [
             "UserAttributeSimilarityValidator"
         )
     },
-    {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "MinimumLengthValidator"
-        )
-    },
-    {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "CommonPasswordValidator"
-        )
-    },
-    {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "NumericPasswordValidator"
-        )
-    },
+    {"NAME": ("django.contrib.auth.password_validation." "MinimumLengthValidator")},
+    {"NAME": ("django.contrib.auth.password_validation." "CommonPasswordValidator")},
+    {"NAME": ("django.contrib.auth.password_validation." "NumericPasswordValidator")},
 ]
 
- 
+
 LANGUAGE_CODE = "es-es"
 TIME_ZONE = "Europe/Madrid"
 USE_I18N = True
@@ -103,8 +88,4 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Confianza para CSRF cuando se despliega en Render
-CSRF_TRUSTED_ORIGINS = [
-    f"https://{h}"
-    for h in ALLOWED_HOSTS
-    if h and "." in h
-]
+CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS if h and "." in h]
