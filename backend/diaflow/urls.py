@@ -1,4 +1,5 @@
 from alertas.views import AlertaViewSet
+from comidas.views import ComidaViewSet, DosisInsulinaViewSet
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -13,6 +14,8 @@ router = DefaultRouter()
 router.register(r"glucemias", GlucosaRegistroViewSet, basename="glucosa")
 router.register(r"insumos", InsumoViewSet, basename="insumo")
 router.register(r"alertas", AlertaViewSet, basename="alerta")
+router.register("comidas", ComidaViewSet, basename="comidas")
+router.register("dosis", DosisInsulinaViewSet, basename="dosis")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

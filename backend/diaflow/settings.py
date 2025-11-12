@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "glucosa",
     "insumos.apps.InsumosConfig",  # para cargar las señales en ready()
     "alertas",
+    "comidas",
 ]
 
 MIDDLEWARE = [
@@ -117,6 +118,6 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "DiaFlow API",
-    "DESCRIPTION": "MVP de DiaFlow - Inventario,Movimientos y alerrtas",
-    "VERSION": "0.2.0",
+    "DESCRIPTION": "MVP de DiaFlow - comidas",
+    "VERSION": "0.3.0",
 }
