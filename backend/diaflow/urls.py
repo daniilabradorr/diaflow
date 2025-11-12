@@ -1,7 +1,9 @@
+from alertas.views import AlertaViewSet
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from glucosa.views import GlucosaRegistroViewSet
+from insumos.views import InsumoViewSet
 from pacientes.views import PacienteViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -9,6 +11,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 # el router
 router = DefaultRouter()
 router.register(r"glucemias", GlucosaRegistroViewSet, basename="glucosa")
+router.register(r"insumos", InsumoViewSet, basename="insumo")
+router.register(r"alertas", AlertaViewSet, basename="alerta")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
