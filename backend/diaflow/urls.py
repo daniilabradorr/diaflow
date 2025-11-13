@@ -10,7 +10,6 @@ from pacientes.views import PacienteViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-# el router
 router = DefaultRouter()
 router.register(r"glucemias", GlucosaRegistroViewSet, basename="glucosa")
 router.register(r"insumos", InsumoViewSet, basename="insumo")
@@ -23,10 +22,12 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Core
     path("", include("core.urls")),
-    # autenticacion(JWT)
+    # Rutas públicas de QR de kits (sin auth)
+    path("", include("kits.urls")),
+    # Autenticación (JWT)
     path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    # Paciente
+    # Paciente (endpoints especiales)
     path(
         "api/paciente/me/", PacienteViewSet.as_view({"get": "me"}), name="paciente_me"
     ),
@@ -35,10 +36,10 @@ urlpatterns = [
         PacienteViewSet.as_view({"put": "update_me", "patch": "update_me"}),
         name="paciente_update_me",
     ),
-    # público QR
-    path("", include("kits.urls")),
-    # la api rest
+    # API REST principal
     path("api/", include(router.urls)),
+    # los reportes
+    path("api/reportes/", include("reportes.urls")),
     # Schema y los Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
