@@ -23,7 +23,7 @@ urlpatterns = [
     # Core
     path("", include("core.urls")),
     # Rutas públicas de QR de kits (sin auth)
-    path("", include("kits.urls_public")),
+    path("", include("kits.urls")),
     # Autenticación (JWT)
     path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
