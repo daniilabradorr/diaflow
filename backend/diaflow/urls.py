@@ -39,6 +39,8 @@ urlpatterns = [
     path("", include("kits.urls")),
     # la api rest
     path("api/", include(router.urls)),
+    # los reportes
+    path("api/reportes/", include("reportes.urls")),
     # Schema y los Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
