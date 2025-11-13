@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "insumos.apps.InsumosConfig",  # para cargar las señales en ready()
     "alertas",
     "comidas",
+    "kits",
 ]
 
 MIDDLEWARE = [
@@ -114,6 +115,10 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/hour",
+        "qr": "10/min",  # público QR
+    },
 }
 
 SPECTACULAR_SETTINGS = {
