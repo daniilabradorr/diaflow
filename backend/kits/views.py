@@ -1,6 +1,8 @@
+import base64
 import io
 
 import qrcode
+from django.urls import reverse
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -10,13 +12,13 @@ from .models import ElementoKit, Kit
 from .serializers import ElementoKitSerializer, KitSerializer, VerificacionSerializer
 
 
-# -------- Throttle público QR --------
+# -------- Throttle público QR (lo usa kits/public.py) --------
 class QRAnonRateThrottle(SimpleRateThrottle):
     scope = "qr"
 
     def get_cache_key(self, request, view):
         if request.user and request.user.is_authenticated:
-            return None  # de esta manera no limito los usuarios logueados aquí
+            return None
         ident = self.get_ident(request)
         return self.cache_format % {"scope": self.scope, "ident": ident}
 
@@ -32,7 +34,7 @@ class KitViewSet(viewsets.ModelViewSet):
     serializer_class = KitSerializer
 
     def get_queryset(self):
-        return Kit.objects.filter(paciente=_paciente(self.request))
+        return Kit.objects.filter(paciente=_paciente(self.request)).order_by("-id")
 
     def perform_create(self, serializer):
         serializer.save(paciente=_paciente(self.request))
@@ -47,13 +49,16 @@ class KitViewSet(viewsets.ModelViewSet):
         items = request.data.get("items", [])
         if not isinstance(items, list):
             return Response({"detail": "items debe ser lista"}, status=400)
-        # reemplazo sencillo: borrar y crear (MVP)
+
+        # MVP: reemplazo sencillo (borro y creo)
         kit.elementos.all().delete()
         objs = [
             ElementoKit(kit=kit, **{**it, "unidad": it.get("unidad", "u")})
             for it in items
         ]
-        ElementoKit.objects.bulk_create(objs)
+        if objs:
+            ElementoKit.objects.bulk_create(objs)
+
         return Response(
             ElementoKitSerializer(kit.elementos.all(), many=True).data, status=200
         )
@@ -61,7 +66,7 @@ class KitViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def verificaciones(self, request, pk=None):
         kit = self.get_object()
-        qs = kit.verificaciones.all()[:100]
+        qs = kit.verificaciones.all().order_by("-id")[:100]
         return Response(VerificacionSerializer(qs, many=True).data)
 
     @action(detail=True, methods=["post"])
@@ -74,24 +79,20 @@ class KitViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def qr(self, request, pk=None):
         """
-        Devuelve el QR en JSON con:
+        Devuelve JSON con datos del QR:
         - token
         - url pública (sin auth)
         - png (base64 crudo)
         - data_url (data:image/png;base64,...)
         """
-        import base64
-
-        from django.urls import reverse
-
         kit = self.get_object()
 
-        # URL pública (rutas anónimas)
+        # URL pública (ruta anónima definida en kits/urls_public.py)
         public_url = request.build_absolute_uri(
             reverse("kits_public_get", kwargs={"token": kit.token_publico})
         )
 
-        # Genera PNG del QR -> base64
+        # Generar PNG del QR -> base64
         img = qrcode.make(public_url)
         buf = io.BytesIO()
         img.save(buf, format="PNG")
