@@ -38,9 +38,9 @@ urlpatterns = [
     ),
     # API REST principal
     path("api/", include(router.urls)),
-    # Reportes
+    # los reportes
     path("api/reportes/", include("reportes.urls")),
-    # Schema & Docs
+    # Schema y los Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
 ]
