@@ -5,7 +5,6 @@ from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from glucosa.views import GlucosaRegistroViewSet
 from insumos.views import InsumoViewSet
-from kits.public import PublicKitVerifyView, PublicKitView
 from kits.views import KitViewSet
 from pacientes.views import PacienteViewSet
 from rest_framework.routers import DefaultRouter

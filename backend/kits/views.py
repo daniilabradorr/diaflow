@@ -1,19 +1,12 @@
 import io
 
 import qrcode
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status, viewsets
-from rest_framework.decorators import (
-    action,
-    api_view,
-    permission_classes,
-    throttle_classes,
-)
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.throttling import SimpleRateThrottle
 
-from .models import ElementoKit, Kit, VerificacionKit
+from .models import ElementoKit, Kit
 from .serializers import ElementoKitSerializer, KitSerializer, VerificacionSerializer
 
 
