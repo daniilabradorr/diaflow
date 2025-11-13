@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     "comidas",
     "kits",
     "reportes",
+
+
 ]
 
 MIDDLEWARE = [
