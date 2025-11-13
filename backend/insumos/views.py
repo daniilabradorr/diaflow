@@ -1,3 +1,4 @@
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from pacientes.models import Paciente
 from rest_framework import decorators, permissions, response, status, viewsets
 
@@ -5,7 +6,22 @@ from .models import Insumo, MovimientoInsumo
 from .serializers import InsumoSerializer, MovimientoSerializer
 
 
-# vista de los insumos
+@extend_schema(
+    tags=["Insumos"],
+    examples=[
+        OpenApiExample(
+            "Crear insumo",
+            value={
+                "nombre": "Tiras",
+                "tipo": "TIR",
+                "stock_actual": 0,
+                "stock_minimo": 2,
+                "unidad": "u",
+            },
+            request_only=True,
+        )
+    ],
+)
 class InsumoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = InsumoSerializer

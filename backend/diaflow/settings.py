@@ -116,7 +116,12 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ),
     "DEFAULT_THROTTLE_RATES": {
+        "user": "120/min",
         "anon": "100/hour",
         "qr": "10/min",  # público QR
     },
@@ -124,6 +129,19 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "DiaFlow API",
-    "DESCRIPTION": "MVP de DiaFlow - comidas",
-    "VERSION": "0.3.0",
+    "DESCRIPTION": "API para glucosa, inventario, comidas/dosis, kits & QR y reportes.",
+    "VERSION": "0.6.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SCHEMA_PATH_PREFIX": r"/api",
+    "TAGS": [
+        {"name": "Glucosa", "description": "Registros de glucemia capilar"},
+        {"name": "Insumos", "description": "Inventario y movimientos"},
+        {"name": "Alertas", "description": "Alertas de stock y sistema"},
+        {"name": "Comidas", "description": "Ingestas con carbohidratos"},
+        {"name": "Dosis", "description": "Dosis de insulina"},
+        {"name": "Kits", "description": "Kits privados del usuario"},
+        {"name": "QR Público", "description": "Verificación sin login por QR"},
+        {"name": "Reportes", "description": "KPIs y resúmenes"},
+    ],
 }

@@ -3,7 +3,8 @@ import io
 
 import qrcode
 from django.urls import reverse
-from rest_framework import permissions, status, viewsets
+from drf_spectacular.utils import OpenApiExample, extend_schema, inline_serializer
+from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.throttling import SimpleRateThrottle
@@ -39,6 +40,36 @@ class KitViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(paciente=_paciente(self.request))
 
+    @extend_schema(
+        tags=["Kits"],
+        request=inline_serializer(
+            name="KitElementosBulk",
+            fields={
+                "items": serializers.ListField(
+                    child=inline_serializer(
+                        name="ElementoItem",
+                        fields={
+                            "etiqueta": serializers.CharField(),
+                            "cantidad_requerida": serializers.IntegerField(),
+                            "unidad": serializers.CharField(required=False),
+                        },
+                    )
+                )
+            },
+            many=False,
+        ),
+        examples=[
+            OpenApiExample(
+                "Bulk elementos",
+                value={
+                    "items": [
+                        {"etiqueta": "Tiras", "cantidad_requerida": 2, "unidad": "u"}
+                    ]
+                },
+                request_only=True,
+            )
+        ],
+    )
     @action(detail=True, methods=["post"])
     def elementos(self, request, pk=None):
         """
@@ -77,6 +108,35 @@ class KitViewSet(viewsets.ModelViewSet):
         return Response({"token_publico": kit.token_publico})
 
     @action(detail=True, methods=["get"])
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name="KitQRResponse",
+                fields={
+                    "token": serializers.CharField(),
+                    "url": serializers.URLField(),
+                    "png": serializers.CharField(help_text="PNG en base64"),
+                    "data_url": serializers.CharField(
+                        help_text="data:image/png;base64,..."
+                    ),
+                },
+            )
+        },
+        examples=[
+            OpenApiExample(
+                "Ejemplo QR JSON",
+                value={
+                    "token": "abc123...",
+                    "url": "https://tu-dominio/qr/abc123...",
+                    "png": "<BASE64>",
+                    "data_url": "data:image/png;base64,<BASE64>",
+                },
+                response_only=True,
+            )
+        ],
+        description="Devuelve los datos del QR del kit.",
+        tags=["kits"],
+    )
     def qr(self, request, pk=None):
         """
         Devuelve JSON con datos del QR:

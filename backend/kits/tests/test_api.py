@@ -28,7 +28,7 @@ class KitsQRAPITest(APITestCase):
         }
         r = self.client.post(f"/api/kits/{kid}/elementos/", elems, format="json")
         assert r.status_code == 200, r.content
-        # obtener token
+        # obtengo el token
         k = self.client.get(f"/api/kits/{kid}/").data
         return k
 
@@ -43,13 +43,14 @@ class KitsQRAPITest(APITestCase):
         k = self.crear_kit_con_elementos()
         kid = k["id"]
 
-        r = self.client.get(f"/api/kits/{kid}/qr")
+        r = self.client.get(f"/api/kits/{kid}/qr/")
         assert r.status_code == 200
-        assert r.get("Content-Type") == "image/png"
+        # la vista devuelve un JSON, no un PNG directo.
+        assert r.get("Content-Type") == "application/json"
 
-        r = self.client.get(f"/api/kits/{kid}/qr?as=dataurl=true")
-        assert r.status_code == 200
-        assert r.data["dataurl"].startswith("data:image/png;base64,")
+        # de esta manerea verifico que campo data_url contenga el prefijo base64
+        data = r.json()
+        assert data["data_url"].startswith("data:image/png;base64,")
 
     def test_public_get_por_token(self):
         k = self.crear_kit_con_elementos()
