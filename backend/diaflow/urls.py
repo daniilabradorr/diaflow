@@ -5,6 +5,8 @@ from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from glucosa.views import GlucosaRegistroViewSet
 from insumos.views import InsumoViewSet
+from kits.public import PublicKitVerifyView, PublicKitView
+from kits.views import KitViewSet
 from pacientes.views import PacienteViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -16,6 +18,7 @@ router.register(r"insumos", InsumoViewSet, basename="insumo")
 router.register(r"alertas", AlertaViewSet, basename="alerta")
 router.register("comidas", ComidaViewSet, basename="comidas")
 router.register("dosis", DosisInsulinaViewSet, basename="dosis")
+router.register(r"kits", KitViewSet, basename="kits")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -33,6 +36,8 @@ urlpatterns = [
         PacienteViewSet.as_view({"put": "update_me", "patch": "update_me"}),
         name="paciente_update_me",
     ),
+    # público QR
+    path("", include("kits.urls")),
     # la api rest
     path("api/", include(router.urls)),
     # Schema y los Docs

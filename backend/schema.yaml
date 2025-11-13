@@ -1,0 +1,2074 @@
+openapi: 3.0.3
+info:
+  title: DiaFlow API
+  version: 0.3.0
+  description: MVP de DiaFlow - comidas
+paths:
+  /api/alertas/:
+    get:
+      operationId: api_alertas_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAlertaList'
+          description: ''
+    post:
+      operationId: api_alertas_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Alerta'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Alerta'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Alerta'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alerta'
+          description: ''
+  /api/alertas/{id}/:
+    get:
+      operationId: api_alertas_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alerta'
+          description: ''
+    put:
+      operationId: api_alertas_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Alerta'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Alerta'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Alerta'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alerta'
+          description: ''
+    patch:
+      operationId: api_alertas_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAlerta'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAlerta'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAlerta'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alerta'
+          description: ''
+    delete:
+      operationId: api_alertas_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auth/token/:
+    post:
+      operationId: api_auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: api_auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/comidas/:
+    get:
+      operationId: api_comidas_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - Comidas
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedComidaList'
+          description: ''
+    post:
+      operationId: api_comidas_create
+      tags:
+      - Comidas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comida'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comida'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comida'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comida'
+          description: ''
+  /api/comidas/{id}/:
+    get:
+      operationId: api_comidas_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este comida.
+        required: true
+      tags:
+      - Comidas
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comida'
+          description: ''
+    put:
+      operationId: api_comidas_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este comida.
+        required: true
+      tags:
+      - Comidas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comida'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comida'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comida'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comida'
+          description: ''
+    patch:
+      operationId: api_comidas_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este comida.
+        required: true
+      tags:
+      - Comidas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComida'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComida'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComida'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comida'
+          description: ''
+    delete:
+      operationId: api_comidas_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este comida.
+        required: true
+      tags:
+      - Comidas
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/dosis/:
+    get:
+      operationId: api_dosis_list
+      parameters:
+      - in: query
+        name: desde
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: query
+        name: hasta
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      - in: query
+        name: tipo
+        schema:
+          type: string
+        description: bolo|basal|corr
+      tags:
+      - Dosis
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDosisInsulinaList'
+          description: ''
+    post:
+      operationId: api_dosis_create
+      parameters:
+      - in: query
+        name: desde
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: query
+        name: hasta
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: query
+        name: tipo
+        schema:
+          type: string
+        description: bolo|basal|corr
+      tags:
+      - Dosis
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DosisInsulina'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DosisInsulina'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DosisInsulina'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DosisInsulina'
+          description: ''
+  /api/dosis/{id}/:
+    get:
+      operationId: api_dosis_retrieve
+      parameters:
+      - in: query
+        name: desde
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: query
+        name: hasta
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este dosis insulina.
+        required: true
+      - in: query
+        name: tipo
+        schema:
+          type: string
+        description: bolo|basal|corr
+      tags:
+      - Dosis
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DosisInsulina'
+          description: ''
+    put:
+      operationId: api_dosis_update
+      parameters:
+      - in: query
+        name: desde
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: query
+        name: hasta
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este dosis insulina.
+        required: true
+      - in: query
+        name: tipo
+        schema:
+          type: string
+        description: bolo|basal|corr
+      tags:
+      - Dosis
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DosisInsulina'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DosisInsulina'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DosisInsulina'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DosisInsulina'
+          description: ''
+    patch:
+      operationId: api_dosis_partial_update
+      parameters:
+      - in: query
+        name: desde
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: query
+        name: hasta
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este dosis insulina.
+        required: true
+      - in: query
+        name: tipo
+        schema:
+          type: string
+        description: bolo|basal|corr
+      tags:
+      - Dosis
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDosisInsulina'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDosisInsulina'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDosisInsulina'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DosisInsulina'
+          description: ''
+    delete:
+      operationId: api_dosis_destroy
+      parameters:
+      - in: query
+        name: desde
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: query
+        name: hasta
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este dosis insulina.
+        required: true
+      - in: query
+        name: tipo
+        schema:
+          type: string
+        description: bolo|basal|corr
+      tags:
+      - Dosis
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/glucemias/:
+    get:
+      operationId: api_glucemias_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGlucosaRegistroList'
+          description: ''
+    post:
+      operationId: api_glucemias_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GlucosaRegistro'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GlucosaRegistro'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GlucosaRegistro'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlucosaRegistro'
+          description: ''
+  /api/glucemias/{id}/:
+    get:
+      operationId: api_glucemias_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlucosaRegistro'
+          description: ''
+    put:
+      operationId: api_glucemias_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GlucosaRegistro'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GlucosaRegistro'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GlucosaRegistro'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlucosaRegistro'
+          description: ''
+    patch:
+      operationId: api_glucemias_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGlucosaRegistro'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGlucosaRegistro'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGlucosaRegistro'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlucosaRegistro'
+          description: ''
+    delete:
+      operationId: api_glucemias_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/insumos/:
+    get:
+      operationId: api_insumos_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInsumoList'
+          description: ''
+    post:
+      operationId: api_insumos_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insumo'
+          description: ''
+  /api/insumos/{id}/:
+    get:
+      operationId: api_insumos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insumo'
+          description: ''
+    put:
+      operationId: api_insumos_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insumo'
+          description: ''
+    patch:
+      operationId: api_insumos_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInsumo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedInsumo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInsumo'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insumo'
+          description: ''
+    delete:
+      operationId: api_insumos_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/insumos/{id}/movimientos/:
+    get:
+      operationId: api_insumos_movimientos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insumo'
+          description: ''
+    post:
+      operationId: api_insumos_movimientos_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Insumo'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insumo'
+          description: ''
+  /api/kits/:
+    get:
+      operationId: api_kits_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedKitList'
+          description: ''
+    post:
+      operationId: api_kits_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Kit'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+  /api/kits/{id}/:
+    get:
+      operationId: api_kits_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+    put:
+      operationId: api_kits_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Kit'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+    patch:
+      operationId: api_kits_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedKit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedKit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedKit'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+    delete:
+      operationId: api_kits_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/kits/{id}/elementos/:
+    post:
+      operationId: api_kits_elementos_create
+      description: |-
+        Bulk upsert de elementos. Cuerpo:
+        {"items":[{"etiqueta":"Tiras","cantidad_requerida":2,"unidad":"u"}, ...]}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Kit'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+  /api/kits/{id}/qr/:
+    get:
+      operationId: api_kits_qr_retrieve
+      description: |-
+        Devuelve el QR en JSON con:
+        - token
+        - url pública (sin auth)
+        - png (base64 crudo)
+        - data_url (data:image/png;base64,...)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+  /api/kits/{id}/rotate_token/:
+    post:
+      operationId: api_kits_rotate_token_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Kit'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+  /api/kits/{id}/verificaciones/:
+    get:
+      operationId: api_kits_verificaciones_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+  /api/paciente/me/:
+    get:
+      operationId: api_paciente_me_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paciente'
+          description: ''
+  /api/paciente/update_me/:
+    put:
+      operationId: api_paciente_update_me_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Paciente'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Paciente'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Paciente'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paciente'
+          description: ''
+    patch:
+      operationId: api_paciente_update_me_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPaciente'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPaciente'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPaciente'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Paciente'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /qr/{token}:
+    get:
+      operationId: qr_retrieve
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - qr
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /qr/{token}/verify:
+    post:
+      operationId: qr_verify_create
+      description: |-
+        Body (ejemplo):
+        {
+          "items": [
+            {"etiqueta": "Tiras", "cantidad": 2},
+            {"etiqueta": "Lancetas", "cantidad": 1}
+          ]
+        }
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - qr
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    Alerta:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo:
+          $ref: '#/components/schemas/AlertaTipoEnum'
+        mensaje:
+          type: string
+        activa:
+          type: boolean
+        creada_en:
+          type: string
+          format: date-time
+          readOnly: true
+        atendida_en:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - creada_en
+      - id
+      - mensaje
+      - tipo
+    AlertaTipoEnum:
+      enum:
+      - stock_bajo
+      type: string
+      description: '* `stock_bajo` - Stock bajo'
+    Comida:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha:
+          type: string
+          format: date-time
+        carbohidratos_g:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        descripcion:
+          type: string
+          maxLength: 255
+      required:
+      - id
+    DosisInsulina:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha:
+          type: string
+          format: date-time
+        tipo:
+          $ref: '#/components/schemas/DosisInsulinaTipoEnum'
+        unidades:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+        comida:
+          type: integer
+          nullable: true
+        notas:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - tipo
+      - unidades
+    DosisInsulinaTipoEnum:
+      enum:
+      - bolo
+      - basal
+      - corr
+      type: string
+      description: |-
+        * `bolo` - Bolo
+        * `basal` - Basal
+        * `corr` - Correción
+    ElementoKit:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        etiqueta:
+          type: string
+          maxLength: 120
+        cantidad_requerida:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        unidad:
+          type: string
+          maxLength: 16
+      required:
+      - etiqueta
+      - id
+    GlucosaRegistro:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        valor_mg_dl:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        medido_en:
+          type: string
+          format: date-time
+        fuente:
+          type: string
+          maxLength: 20
+        notas:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - medido_en
+      - valor_mg_dl
+    Insumo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 120
+        tipo:
+          $ref: '#/components/schemas/InsumoTipoEnum'
+        stock_actual:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        stock_minimo:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        unidad:
+          type: string
+          maxLength: 20
+        caduca_en:
+          type: string
+          format: date
+          nullable: true
+        creado_en:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - creado_en
+      - id
+      - nombre
+      - tipo
+    InsumoTipoEnum:
+      enum:
+      - INS
+      - TIR
+      - AGU
+      - SEN
+      - OTR
+      type: string
+      description: |-
+        * `INS` - Insulina
+        * `TIR` - Tiras
+        * `AGU` - Agujas
+        * `SEN` - Sensor
+        * `OTR` - Otro
+    Kit:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 120
+        descripcion:
+          type: string
+        activo:
+          type: boolean
+        token_publico:
+          type: string
+          readOnly: true
+        elementos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementoKit'
+          readOnly: true
+      required:
+      - elementos
+      - id
+      - nombre
+      - token_publico
+    Paciente:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 120
+        fecha_nacimiento:
+          type: string
+          format: date
+          nullable: true
+        tipo_diabetes:
+          $ref: '#/components/schemas/TipoDiabetesEnum'
+        objetivo_glucosa_min:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        objetivo_glucosa_max:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+      required:
+      - id
+      - nombre
+    PaginatedAlertaList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alerta'
+    PaginatedComidaList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comida'
+    PaginatedDosisInsulinaList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DosisInsulina'
+    PaginatedGlucosaRegistroList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GlucosaRegistro'
+    PaginatedInsumoList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Insumo'
+    PaginatedKitList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Kit'
+    PatchedAlerta:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo:
+          $ref: '#/components/schemas/AlertaTipoEnum'
+        mensaje:
+          type: string
+        activa:
+          type: boolean
+        creada_en:
+          type: string
+          format: date-time
+          readOnly: true
+        atendida_en:
+          type: string
+          format: date-time
+          nullable: true
+    PatchedComida:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha:
+          type: string
+          format: date-time
+        carbohidratos_g:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        descripcion:
+          type: string
+          maxLength: 255
+    PatchedDosisInsulina:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha:
+          type: string
+          format: date-time
+        tipo:
+          $ref: '#/components/schemas/DosisInsulinaTipoEnum'
+        unidades:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+        comida:
+          type: integer
+          nullable: true
+        notas:
+          type: string
+          maxLength: 255
+    PatchedGlucosaRegistro:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        valor_mg_dl:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        medido_en:
+          type: string
+          format: date-time
+        fuente:
+          type: string
+          maxLength: 20
+        notas:
+          type: string
+          maxLength: 255
+    PatchedInsumo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 120
+        tipo:
+          $ref: '#/components/schemas/InsumoTipoEnum'
+        stock_actual:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        stock_minimo:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        unidad:
+          type: string
+          maxLength: 20
+        caduca_en:
+          type: string
+          format: date
+          nullable: true
+        creado_en:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedKit:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 120
+        descripcion:
+          type: string
+        activo:
+          type: boolean
+        token_publico:
+          type: string
+          readOnly: true
+        elementos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementoKit'
+          readOnly: true
+    PatchedPaciente:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 120
+        fecha_nacimiento:
+          type: string
+          format: date
+          nullable: true
+        tipo_diabetes:
+          $ref: '#/components/schemas/TipoDiabetesEnum'
+        objetivo_glucosa_min:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        objetivo_glucosa_max:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+    TipoDiabetesEnum:
+      enum:
+      - T1
+      - T2
+      - G
+      - O
+      type: string
+      description: |-
+        * `T1` - Tipo 1
+        * `T2` - Tipo 2
+        * `G` - Gestacional
+        * `O` - Otra
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
