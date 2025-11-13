@@ -1,8 +1,12 @@
+import logging
 import os
 from pathlib import Path
 
 import dj_database_url
 from dotenv import load_dotenv
+
+log = logging.getLogger("project")
+log.info("evento_interesante", extra={"k": "v"})
 
 load_dotenv()
 
@@ -130,7 +134,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "TITLE": "DiaFlow API",
     "DESCRIPTION": "API para glucosa, inventario, comidas/dosis, kits & QR y reportes.",
-    "VERSION": "0.6.0",
+    "VERSION": "0.7.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
     "SCHEMA_PATH_PREFIX": r"/api",
@@ -144,4 +148,27 @@ SPECTACULAR_SETTINGS = {
         {"name": "QR Público", "description": "Verificación sin login por QR"},
         {"name": "Reportes", "description": "KPIs y resúmenes"},
     ],
+}
+
+# los logs
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json": {"()": "core.logging.JsonFormatter"},
+        "simple": {"format": "[{levelname}] {name}: {message}", "style": "{"},
+    },
+    "handlers": {
+        "console_json": {"class": "logging.StreamHandler", "formatter": "json"},
+        "console_simple": {"class": "logging.StreamHandler", "formatter": "simple"},
+    },
+    "loggers": {
+        "django": {"handlers": ["console_simple"], "level": "INFO", "propagate": True},
+        "project": {"handlers": ["console_json"], "level": "INFO", "propagate": False},
+        "django.request": {
+            "handlers": ["console_simple"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+    },
 }
