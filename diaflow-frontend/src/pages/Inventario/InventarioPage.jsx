@@ -8,7 +8,10 @@ import {
 import { useAlertas, useMarcarAlertaAtendida } from "../../api/hooks/useAlertas";
 
 function InventarioPage() {
-  const { data: insumos, isLoading, isError } = useInsumos();
+  const query = useInsumos();
+  const insumos = Array.isArray(query.data) ? query.data : [];
+  const isLoading = query.isLoading;
+  const isError = query.isError;
   const saveInsumo = useSaveInsumo();
   const deleteInsumo = useDeleteInsumo();
   const crearMovimiento = useCrearMovimientoInsumo();

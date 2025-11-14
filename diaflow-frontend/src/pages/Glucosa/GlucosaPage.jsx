@@ -49,11 +49,11 @@ function GlucosaPage() {
   }, [desdeDate, hastaDate]);
 
   // query de datos
-  const {
-    data: glucemias,
-    isLoading,
-    isError,
-  } = useGlucemias(filtros);
+  const query = useGlucemias(filtros);
+  const glucemias = Array.isArray(query.data) ? query.data : [];
+  const isLoading = query.isLoading;
+  const isError = query.isError;
+
 
   // Mutations
   const saveMutation = useSaveGlucemia();

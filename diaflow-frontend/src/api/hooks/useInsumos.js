@@ -15,7 +15,6 @@ export function useInsumos() {
 // GUARDAR (crear / editar) insumo
 export function useSaveInsumo() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ id, payload }) => {
       if (id) {
@@ -32,13 +31,27 @@ export function useSaveInsumo() {
   });
 }
 
-// CREAR movimiento (entrada / salida)
-export function useMovimientoInsumo() {
+// BORRAR insumo
+export function useDeleteInsumo() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: async ({ insumoId, payload }) => {
-      const resp = await api.post(`insumos/${insumoId}/movimientos/`, payload);
+    mutationFn: async (id) => {
+      await api.delete(`insumos/${id}/`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["insumos"]);
+    },
+  });
+}
+
+// CREAR movimiento (entrada / salida)
+export function useCrearMovimientoInsumo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ insumoId, cantidad }) => {
+      const resp = await api.post(`insumos/${insumoId}/movimientos/`, {
+        cantidad: cantidad,
+      });
       return resp.data;
     },
     onSuccess: () => {

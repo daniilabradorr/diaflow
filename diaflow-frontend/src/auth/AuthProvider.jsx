@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 //para centraliza la gestión de la sesión del usuario (login, logout, datos yel token JWT)
 export const AuthContext = createContext({

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "comidas",
     "kits",
     "reportes",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "diaflow.urls"
@@ -172,3 +174,11 @@ LOGGING = {
         },
     },
 }
+
+
+CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
+
+# O si quieres hacerlo más seguro:
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+# ]

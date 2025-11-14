@@ -26,8 +26,7 @@ function KitsPage() {
     }
   }, [kits, selectedKitId]);
 
-  const { data: kitDetalle, isLoading: detalleLoading } =
-    useKitDetalle(selectedKitId);
+  const { data: kitDetalle, isLoading: detalleLoading } = useKitDetalle(selectedKitId);
   const { data: qrData } = useQrKit(selectedKitId);
   const { data: verificaciones } = useVerificacionesKit(selectedKitId);
 
@@ -59,8 +58,7 @@ function KitsPage() {
         i === index
           ? {
               ...el,
-              [field]:
-                field === "cantidad_requerida" ? Number(value) || 0 : value,
+              [field]: field === "cantidad_requerida" ? Number(value) || 0 : value,
             }
           : el
       )
@@ -102,13 +100,27 @@ function KitsPage() {
     await rotateToken.mutateAsync(selectedKitId);
   }
 
+  async function handleCrearKit() {
+    const nombre = prompt("Nombre para el nuevo kit:");
+    if (!nombre) return;
+    const descripcion = prompt("Descripción del kit (opcional):") || "";
+    const newKit = await saveKit.mutateAsync({
+      payload: { nombre, descripcion },
+    });
+    if (newKit && newKit.id) {
+      setSelectedKitId(newKit.id);
+    }
+  }
+
   return (
     <div className="flex gap-6">
       {/* Columna izquierda: lista de kits */}
       <aside className="w-64 border-r pr-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-bold">Kits</h2>
-          {/* opcional: botón crear kit */}
+          <button className="text-sm text-blue-600" onClick={handleCrearKit}>
+            Crear kit
+          </button>
         </div>
 
         {kitsLoading && <p>Cargando kits...</p>}
@@ -207,9 +219,7 @@ function KitsPage() {
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="border px-2 py-1 text-left">Etiqueta</th>
-                      <th className="border px-2 py-1 text-right">
-                        Cantidad
-                      </th>
+                      <th className="border px-2 py-1 text-right">Cantidad</th>
                       <th className="border px-2 py-1 text-left">Unidad</th>
                       <th className="border px-2 py-1 text-center">Acciones</th>
                     </tr>
@@ -222,11 +232,7 @@ function KitsPage() {
                             className="border rounded px-1 py-0.5 text-xs w-full"
                             value={el.etiqueta}
                             onChange={(e) =>
-                              updateElementoField(
-                                index,
-                                "etiqueta",
-                                e.target.value
-                              )
+                              updateElementoField(index, "etiqueta", e.target.value)
                             }
                           />
                         </td>
@@ -236,11 +242,7 @@ function KitsPage() {
                             className="border rounded px-1 py-0.5 text-xs w-20 text-right"
                             value={el.cantidad_requerida}
                             onChange={(e) =>
-                              updateElementoField(
-                                index,
-                                "cantidad_requerida",
-                                e.target.value
-                              )
+                              updateElementoField(index, "cantidad_requerida", e.target.value)
                             }
                           />
                         </td>
@@ -249,11 +251,7 @@ function KitsPage() {
                             className="border rounded px-1 py-0.5 text-xs w-24"
                             value={el.unidad || ""}
                             onChange={(e) =>
-                              updateElementoField(
-                                index,
-                                "unidad",
-                                e.target.value
-                              )
+                              updateElementoField(index, "unidad", e.target.value)
                             }
                           />
                         </td>
@@ -302,8 +300,7 @@ function KitsPage() {
                   )}
                   <div className="text-sm">
                     <p className="mb-1">
-                      Token:{" "}
-                      <code className="bg-gray-100 px-1">{qrData.token}</code>
+                      Token: <code className="bg-gray-100 px-1">{qrData.token}</code>
                     </p>
                     <p className="mb-1">
                       Enlace público:
