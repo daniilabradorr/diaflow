@@ -25,7 +25,6 @@ function AppRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/glucosa" element={<GlucosaPage />} />
           <Route path="/inventario" element={<InventarioPage />} />
-          <Route path="/inventario" element={<InventarioPage />} />
           <Route path="/comidas" element={<ComidasPage />} />
           <Route path="/dosis" element={<DosisPage />} />
           <Route path="/kits" element={<KitsPage />} />

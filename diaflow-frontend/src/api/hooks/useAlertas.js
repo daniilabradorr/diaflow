@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../axios";
 
-// LISTAR alertas activas
-export function useAlertasActivas() {
+// LISTAR alertas (por defecto, activas)
+export function useAlertas(activas = true) {
   return useQuery({
-    queryKey: ["alertas", "activas"],
+    queryKey: ["alertas", activas ? "activas" : "inactivas"],
     queryFn: async () => {
       const resp = await api.get("alertas/", {
-        params: { activas: true },
+        params: { activas: activas },
       });
       return resp.data;
     },
@@ -15,9 +15,8 @@ export function useAlertasActivas() {
 }
 
 // MARCAR alerta como atendida
-export function useMarcarAlerta() {
+export function useMarcarAlertaAtendida() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ id, payload }) => {
       const resp = await api.patch(`alertas/${id}/`, payload);
