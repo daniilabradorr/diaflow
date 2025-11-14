@@ -1,0 +1,14 @@
+export function PrimaryButton({ children, type="button", disabled=false, onClick }) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`text-white font-medium bg-blue-600 px-4 py-2 rounded 
+                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                 disabled:opacity-50 disabled:cursor-not-allowed text-sm`}
+    >
+      {children}
+    </button>
+  );
+}
