@@ -20,7 +20,7 @@ def _paciente(request) -> Paciente:
 def _parse_yyyy_mm_dd(s: Optional[str]) -> Optional[datetime]:
     if not s:
         return None
-    return datetime.strtime(s, "%Y-%m-%d").replace(
+    return datetime.strptime(s, "%Y-%m-%d").replace(
         tzinfo=timezone.get_current_timezone()
     )
 
