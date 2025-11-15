@@ -8,8 +8,13 @@ export function useComidas(filtros) {
       const params = {};
       if (filtros?.desde) params.desde = filtros.desde;
       if (filtros?.hasta) params.hasta = filtros.hasta;
+
       const resp = await api.get("comidas/", { params });
-      return resp.data;
+      const data = resp.data;
+
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.results)) return data.results;
+      return [];
     },
   });
 }

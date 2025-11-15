@@ -9,7 +9,10 @@ export function useAlertas(activas = true) {
       const resp = await api.get("alertas/", {
         params: { activas: activas },
       });
-      return resp.data;
+      const data = resp.data;
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.results)) return data.results;
+      return [];
     },
   });
 }

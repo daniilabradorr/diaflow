@@ -9,8 +9,13 @@ export function useDosis(filtros) {
       if (filtros?.desde) params.desde = filtros.desde;
       if (filtros?.hasta) params.hasta = filtros.hasta;
       if (filtros?.tipo && filtros.tipo !== "todas") params.tipo = filtros.tipo;
+
       const resp = await api.get("dosis/", { params });
-      return resp.data;
+      const data = resp.data;
+
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.results)) return data.results;
+      return [];
     },
   });
 }
