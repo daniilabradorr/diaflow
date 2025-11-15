@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+// src/pages/Home/Home.jsx
+import React, { useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 // Hooks de datos
@@ -7,6 +8,10 @@ import { useInsumos } from "../../api/hooks/useInsumos";
 import { useAlertas } from "../../api/hooks/useAlertas";
 import { useDosis } from "../../api/hooks/useDosis";
 import { useComidas } from "../../api/hooks/useComidas";
+
+// UI
+import Spinner from "../../components/common/Spinner";
+import { useToast } from "../../components/common/ToastProvider";
 
 // Gráficos
 import {
@@ -20,6 +25,8 @@ import {
 } from "recharts";
 
 function Home() {
+  const { showToast } = useToast();
+
   // --- Fechas para glucosa (últimos 7 días) + hoy ---
   const { filtrosGlucosa, hoyISO } = useMemo(() => {
     const hoy = new Date();
@@ -33,7 +40,6 @@ function Home() {
 
     return {
       filtrosGlucosa: {
-        // rango [hace 7 días 00:00, hoy 23:59]
         desde: `${desdeStr}T00:00:00`,
         hasta: `${hoyStr}T23:59:59`,
       },
@@ -41,36 +47,49 @@ function Home() {
     };
   }, []);
 
-  // --- Glucemias últimos 7 días ---
+  // --- Queries ---
   const glucQuery = useGlucemias(filtrosGlucosa);
-  const glucemias = glucQuery.data ?? [];
-  const glucLoading = glucQuery.isLoading;
-
-  // --- Insumos ---
   const insuQuery = useInsumos();
-  const insumos = insuQuery.data ?? [];
-  const insuLoading = insuQuery.isLoading;
-
-  // --- Alertas activas ---
   const alertQuery = useAlertas(true);
-  const alertas = alertQuery.data ?? [];
-  const alertLoading = alertQuery.isLoading;
-
-  // --- Dosis hoy ---
   const dosisQuery = useDosis({
     desde: `${hoyISO}T00:00:00`,
     hasta: `${hoyISO}T23:59:59`,
   });
-  const dosis = dosisQuery.data ?? [];
-  const dosisHoy = dosis.length;
-
-  // --- Comidas hoy ---
   const comidasQuery = useComidas({
     desde: `${hoyISO}T00:00:00`,
     hasta: `${hoyISO}T23:59:59`,
   });
+
+  const glucemias = glucQuery.data ?? [];
+  const insumos = insuQuery.data ?? [];
+  const alertas = alertQuery.data ?? [];
+  const dosis = dosisQuery.data ?? [];
   const comidas = comidasQuery.data ?? [];
+
+  const dosisHoy = dosis.length;
   const comidasHoy = comidas.length;
+
+  // --- Toaster de errores de carga ---
+  useEffect(() => {
+    const error =
+      glucQuery.error ||
+      insuQuery.error ||
+      alertQuery.error ||
+      dosisQuery.error ||
+      comidasQuery.error;
+
+    if (error) {
+      console.error("Error cargando datos del panel:", error);
+      showToast("No se pudieron cargar algunos datos del panel.", "error");
+    }
+  }, [
+    glucQuery.error,
+    insuQuery.error,
+    alertQuery.error,
+    dosisQuery.error,
+    comidasQuery.error,
+    showToast,
+  ]);
 
   // --- Cálculos de métricas de glucosa ---
   const {
@@ -117,7 +136,6 @@ function Home() {
     ).length;
     const tir = Math.round((enRangoCount / valores.length) * 100);
 
-    // Datos agregados por día para el gráfico
     const datosPorDia = {};
     for (let g of ordenadas) {
       const fecha = new Date(g.medido_en).toLocaleDateString("es-ES", {
@@ -125,11 +143,12 @@ function Home() {
         month: "2-digit",
       });
       if (!datosPorDia[fecha]) {
-        datosPorDia[fecha] = { fecha: fecha, suma: 0, count: 0 };
+        datosPorDia[fecha] = { fecha, suma: 0, count: 0 };
       }
       datosPorDia[fecha].suma += g.valor_mg_dl;
       datosPorDia[fecha].count += 1;
     }
+
     const datosGraf = Object.values(datosPorDia).map((entry) => ({
       fecha: entry.fecha,
       valor: Math.round(entry.suma / entry.count),
@@ -163,9 +182,9 @@ function Home() {
   );
 
   const hayCargando =
-    glucLoading ||
-    insuLoading ||
-    alertLoading ||
+    glucQuery.isLoading ||
+    insuQuery.isLoading ||
+    alertQuery.isLoading ||
     dosisQuery.isLoading ||
     comidasQuery.isLoading;
 
@@ -182,9 +201,9 @@ function Home() {
 
       {/* Estado de carga */}
       {hayCargando && (
-        <p className="text-sm text-slate-500">
-          Cargando datos del panel...
-        </p>
+        <div className="mb-2">
+          <Spinner label="Cargando datos del panel..." />
+        </div>
       )}
 
       {/* KPIs */}
@@ -228,7 +247,10 @@ function Home() {
           <p className="mt-1 text-xs text-slate-500">
             Objetivo: {objetivoMin}–{objetivoMax} mg/dL
           </p>
-          <div className="mt-2 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+          <div
+            className="mt-2 rounded-full bg-slate-100 overflow-hidden"
+            style={{ width: "100%", height: 8 }}
+          >
             <div
               className="h-full rounded-full bg-emerald-500 transition-all"
               style={{ width: `${tirPct || 0}%` }}
@@ -336,7 +358,8 @@ function Home() {
               {glucemias.length} lectura(s) en el periodo
             </p>
           </div>
-          <div className="h-64 w-full">
+
+          <div style={{ width: "100%", height: 260 }}>
             {datosGrafico.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={datosGrafico}>
@@ -355,7 +378,7 @@ function Home() {
           </div>
         </div>
 
-        {/* Panel lateral: últimas lecturas + stock crítico + alertas */}
+        {/* Panel lateral */}
         <div className="space-y-4">
           {/* Últimas lecturas */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
