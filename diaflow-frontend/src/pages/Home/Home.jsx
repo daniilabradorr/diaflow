@@ -91,6 +91,22 @@ function Home() {
     showToast,
   ]);
 
+  // --- Dosis hoy ---
+  const dosisQuery = useDosis({
+    desde: `${hoyISO}T00:00:00`,
+    hasta: `${hoyISO}T23:59:59`,
+  });
+  const dosis = dosisQuery.data ?? [];
+  const dosisHoy = dosis.length;
+
+  // --- Comidas hoy ---
+  const comidasQuery = useComidas({
+    desde: `${hoyISO}T00:00:00`,
+    hasta: `${hoyISO}T23:59:59`,
+  });
+  const comidas = comidasQuery.data ?? [];
+  const comidasHoy = comidas.length;
+
   // --- Cálculos de métricas de glucosa ---
   const {
     ultimaGlucemia,
@@ -136,6 +152,7 @@ function Home() {
     ).length;
     const tir = Math.round((enRangoCount / valores.length) * 100);
 
+    // Datos agregados por día para el gráfico
     const datosPorDia = {};
     for (let g of ordenadas) {
       const fecha = new Date(g.medido_en).toLocaleDateString("es-ES", {
