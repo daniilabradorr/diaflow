@@ -1,9 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
 import { jwtDecode } from "jwt-decode";
+import api from "../api/axios";
 
-//para centraliza la gestión de la sesión del usuario (login, logout, datos yel token JWT)
 export const AuthContext = createContext({
   user: null,
   token: null,
@@ -12,33 +11,62 @@ export const AuthContext = createContext({
 });
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("access"));
+  const [token, setToken] = useState(localStorage.getItem("access") || null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  //de esta manera uso el effect para que cuando cambie el token intenta decodificarlo
+  // Cargar perfil de usuario cuando hay token
   useEffect(() => {
-    if (token) {
+    const fetchProfile = async () => {
       try {
+        const resp = await api.get("paciente/me/");
+        const perfil = resp.data;
+        // Combinar datos del perfil con info del token (username/email)
         const decoded = jwtDecode(token);
-        setUser({ username: decoded.username });
+        setUser({
+          username: decoded.username,
+          name: perfil.nombre || decoded.username,
+          email: decoded.username, // asumimos username es el email
+          // ...podríamos incluir más campos si existieran (ej: objetivos glucosa)
+        });
       } catch (e) {
-        console.error("Error al decodificar token", e);
-        setUser(null);
+        console.error("Error al cargar perfil del usuario", e);
+        setUser({ username: jwtDecode(token).username });
       }
+    };
+
+    if (token) {
+      fetchProfile();
     } else {
       setUser(null);
     }
   }, [token]);
 
+  // Iniciar sesión: obtiene token y perfil
   async function login(username, password) {
+    // Hacer login contra la API
     const resp = await api.post("auth/token/", { username, password });
-    const access = resp.data.access;
-    setToken(access);
-    localStorage.setItem("access", access);
+    const accessToken = resp.data.access;
+    // Guardar token
+    setToken(accessToken);
+    localStorage.setItem("access", accessToken);
+    // Opcional: cargar perfil inmediatamente
+    try {
+      const profileResp = await api.get("paciente/me/");
+      const perfil = profileResp.data;
+      setUser({
+        username: username,
+        name: perfil.nombre || username,
+        email: perfil.email || username,
+      });
+    } catch {
+      // Si falla cargar perfil, al menos decodificar el token para username
+      setUser({ username });
+    }
     navigate("/");
   }
 
+  // Cerrar sesión: limpiar datos
   function logout() {
     setToken(null);
     setUser(null);
@@ -47,6 +75,5 @@ export function AuthProvider({ children }) {
   }
 
   const value = { user, token, login, logout };
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../axios";
 
-//helper para construir los params desde un objeto filtros
+// helper para construir los params desde un objeto filtros
 function buildParams(filters) {
   const params = {};
   if (filters?.desde) params.desde = filters.desde;
@@ -9,7 +9,7 @@ function buildParams(filters) {
   return params;
 }
 
-//LISTAR glucemias
+// LISTAR glucemias
 export function useGlucemias(filters) {
   return useQuery({
     queryKey: ["glucemias", filters],
@@ -17,12 +17,16 @@ export function useGlucemias(filters) {
       const resp = await api.get("glucemias/", {
         params: buildParams(filters),
       });
-      return resp.data; //array de registros
+      const data = resp.data;
+
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.results)) return data.results;
+      return [];
     },
   });
 }
 
-//CREAR o ACTUALIZAR laglucemia
+// CREAR o ACTUALIZAR la glucemia
 export function useSaveGlucemia() {
   const queryClient = useQueryClient();
 
@@ -42,7 +46,7 @@ export function useSaveGlucemia() {
   });
 }
 
-//ELIMINAR glucemia
+// ELIMINAR glucemia
 export function useDeleteGlucemia() {
   const queryClient = useQueryClient();
 

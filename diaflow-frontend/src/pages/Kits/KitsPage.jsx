@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import {
   useKits,
   useKitDetalle,
+  useVerificacionesKit,
   useSaveKit,
   useDeleteKit,
   useSaveElementosKit,
-  useQrKit,
-  useVerificacionesKit,
   useRotateKitToken,
+ useQrKit,
 } from "../../api/hooks/useKits";
 
 function KitsPage() {

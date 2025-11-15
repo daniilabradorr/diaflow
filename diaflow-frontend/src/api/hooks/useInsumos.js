@@ -7,7 +7,11 @@ export function useInsumos() {
     queryKey: ["insumos"],
     queryFn: async () => {
       const resp = await api.get("insumos/");
-      return resp.data;
+      const data = resp.data;
+
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.results)) return data.results;
+      return [];
     },
   });
 }

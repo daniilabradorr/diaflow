@@ -5,6 +5,8 @@ import Layout from "../components/common/Layout";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import PublicQR from "../pages/PublicQr/PublicQR";
+import RegisterPage from "../pages/Auth/RegisterPage";
+import ProfilePage from "../pages/Auth/ProfilePage";
 import GlucosaPage from "../pages/Glucosa/GlucosaPage";
 import InventarioPage from "../pages/Inventario/InventarioPage";
 import ComidasPage from "../pages/Comidas/ComidasPage";
@@ -17,12 +19,14 @@ function AppRoutes() {
     <Routes>
       {/* Pública */}
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="/qr/:token" element={<PublicQR />} />
 
       {/* Privadas */}
       <Route element={<RequireAuth />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/glucosa" element={<GlucosaPage />} />
           <Route path="/inventario" element={<InventarioPage />} />
           <Route path="/comidas" element={<ComidasPage />} />
