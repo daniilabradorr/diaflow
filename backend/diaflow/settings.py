@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     "django_filters",
     "core",
     # Proyecto
-    "pacientes",
+    "pacientes.apps.PacientesConfig",
     "glucosa",
     "insumos.apps.InsumosConfig",  # para cargar las señales en ready()
     "alertas",

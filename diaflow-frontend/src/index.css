@@ -1,6 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* aquí puedes añadir cosas globales si quieres */
+body {
+  @apply bg-slate-100 text-slate-900;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

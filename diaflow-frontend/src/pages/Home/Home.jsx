@@ -3,8 +3,8 @@ import { useGlucemias } from "../../api/hooks/useGlucemias";
 import { useInsumos } from "../../api/hooks/useInsumos";
 import { useAlertas } from "../../api/hooks/useAlertas";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -13,16 +13,22 @@ import {
 } from "recharts";
 
 function Home() {
-  // Rango de fechas: últimos 7 días
+  const { desdeISO, hastaISO } = useMemo(() => {
   const hoy = new Date();
   const hace7Dias = new Date();
   hace7Dias.setDate(hoy.getDate() - 7);
 
-  // --- Glucemias últimos 7 días ---
-  const glucQuery = useGlucemias({
-    desde: hace7Dias.toISOString(),
-    hasta: hoy.toISOString(),
-  });
+  return {
+    desdeISO: hace7Dias.toISOString(),
+    hastaISO: hoy.toISOString(),
+  };
+}, []); // <-- Array vacío: solo se ejecuta una vez al montar.
+
+// --- Glucemias últimos 7 días ---
+const glucQuery = useGlucemias({
+  desde: desdeISO, // Usamos los valores estables y memoizados
+  hasta: hastaISO, // Usamos los valores estables y memoizados
+});
   const glucemias = Array.isArray(glucQuery.data) ? glucQuery.data : [];
   const glucLoading = glucQuery.isLoading;
 
@@ -61,38 +67,39 @@ function Home() {
         ultimasLecturas: [],
       };
     }
-
     const objetivoMinLocal = 70;
     const objetivoMaxLocal = 180;
-
     const ordenadas = [...glucemias].sort(
-      (a, b) =>
-        new Date(a.medido_en).getTime() - new Date(b.medido_en).getTime()
+      (a, b) => new Date(a.medido_en) - new Date(b.medido_en)
     );
-
     const valores = ordenadas.map((g) => g.valor_mg_dl);
     const suma = valores.reduce((acc, v) => acc + v, 0);
     const media = suma / valores.length;
     const min = Math.min(...valores);
     const max = Math.max(...valores);
-
-    const enRango = ordenadas.filter(
-      (g) =>
-        g.valor_mg_dl >= objetivoMinLocal &&
-        g.valor_mg_dl <= objetivoMaxLocal
+    const enRangoCount = ordenadas.filter(
+      (g) => g.valor_mg_dl >= objetivoMinLocal && g.valor_mg_dl <= objetivoMaxLocal
     ).length;
-    const tir = Math.round((enRango / valores.length) * 100);
+    const tir = Math.round((enRangoCount / valores.length) * 100);
 
-    const datosGraf = ordenadas.map((g) => ({
-      fecha: new Date(g.medido_en).toLocaleDateString("es-ES", {
+    const datosPorDia = {};
+    for (let g of ordenadas) {
+      const fecha = new Date(g.medido_en).toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "2-digit",
-      }),
-      valor: g.valor_mg_dl,
+      });
+      if (!datosPorDia[fecha]) {
+        datosPorDia[fecha] = { fecha: fecha, suma: 0, count: 0 };
+      }
+      datosPorDia[fecha].suma += g.valor_mg_dl;
+      datosPorDia[fecha].count += 1;
+    }
+    const datosGraf = Object.values(datosPorDia).map((entry) => ({
+      fecha: entry.fecha,
+      valor: Math.round(entry.suma / entry.count),
     }));
 
     const ultimas = [...ordenadas].slice(-5).reverse();
-
     return {
       ultimaGlucemia: ordenadas[ordenadas.length - 1],
       mediaGlucosa: media.toFixed(1),
@@ -106,7 +113,7 @@ function Home() {
     };
   }, [glucemias]);
 
-  // --- Stock crítico ---
+  // --- Identificar insumos en stock crítico ---
   const stockCritico = useMemo(
     () =>
       insumos.filter(
@@ -126,8 +133,7 @@ function Home() {
       <header className="flex flex-col gap-1 mb-2">
         <h2 className="text-2xl font-bold tracking-tight">Panel general</h2>
         <p className="text-sm text-slate-500">
-          Resumen rápido de tu control de glucosa e inventario en la última
-          semana.
+          Resumen rápido de tu control de glucosa e inventario en la última semana.
         </p>
       </header>
 
@@ -138,10 +144,9 @@ function Home() {
 
       {/* KPIs */}
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* Tarjeta Última glucemia */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-medium text-slate-500 uppercase">
-            Última glucemia
-          </p>
+          <p className="text-xs font-medium text-slate-500 uppercase">Última glucemia</p>
           <p className="mt-2 text-2xl font-semibold text-slate-900">
             {ultimaGlucemia ? `${ultimaGlucemia.valor_mg_dl} mg/dL` : "—"}
           </p>
@@ -151,11 +156,9 @@ function Home() {
               : "Sin lecturas recientes"}
           </p>
         </div>
-
+        {/* Tarjeta Media 7 días */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-medium text-slate-500 uppercase">
-            Media últimos 7 días
-          </p>
+          <p className="text-xs font-medium text-slate-500 uppercase">Media últimos 7 días</p>
           <p className="mt-2 text-2xl font-semibold text-slate-900">
             {mediaGlucosa ? `${mediaGlucosa} mg/dL` : "—"}
           </p>
@@ -163,11 +166,9 @@ function Home() {
             Min: {minGlucosa ?? "—"} • Max: {maxGlucosa ?? "—"}
           </p>
         </div>
-
+        {/* Tarjeta Tiempo en rango */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-medium text-slate-500 uppercase">
-            Tiempo en rango
-          </p>
+          <p className="text-xs font-medium text-slate-500 uppercase">Tiempo en rango</p>
           <p className="mt-2 text-2xl font-semibold text-slate-900">
             {tirPct != null ? `${tirPct}%` : "—"}
           </p>
@@ -181,11 +182,9 @@ function Home() {
             />
           </div>
         </div>
-
+        {/* Tarjeta Alertas/Inventario */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-medium text-slate-500 uppercase">
-            Alertas e inventario
-          </p>
+          <p className="text-xs font-medium text-slate-500 uppercase">Alertas e inventario</p>
           <p className="mt-2 text-2xl font-semibold text-slate-900">
             {alertas.length} <span className="text-sm text-slate-500">alertas</span>
           </p>
@@ -200,9 +199,7 @@ function Home() {
         {/* Gráfico de glucosa */}
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-slate-900">
-              Evolución de glucosa (últimos 7 días)
-            </h3>
+            <h3 className="font-semibold text-slate-900">Evolución de glucosa (últimos 7 días)</h3>
             <p className="text-xs text-slate-500">
               {glucemias.length} lectura(s) en el periodo
             </p>
@@ -210,18 +207,13 @@ function Home() {
           <div className="h-64 w-full">
             {datosGrafico.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={datosGrafico}>
+                <BarChart data={datosGrafico}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="fecha" tick={{ fontSize: 10 }} />
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="valor"
-                    dot={{ r: 2 }}
-                    stroke="#2563eb"
-                  />
-                </LineChart>
+                  <Bar dataKey="valor" fill="#2563eb" />
+                </BarChart>
               </ResponsiveContainer>
             ) : (
               <p className="text-sm text-slate-500">
@@ -235,9 +227,7 @@ function Home() {
         <div className="space-y-4">
           {/* Últimas lecturas */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-            <h3 className="font-semibold text-slate-900 mb-2">
-              Últimas lecturas
-            </h3>
+            <h3 className="font-semibold text-slate-900 mb-2">Últimas lecturas</h3>
             {ultimasLecturas.length > 0 ? (
               <ul className="space-y-2 text-sm">
                 {ultimasLecturas.map((g) => (
@@ -254,24 +244,18 @@ function Home() {
                       })}
                     </span>
                     <span className="font-semibold">
-                      {g.valor_mg_dl}{" "}
-                      <span className="text-xs text-slate-500">mg/dL</span>
+                      {g.valor_mg_dl} <span className="text-xs text-slate-500">mg/dL</span>
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-slate-500">
-                Aún no hay lecturas registradas.
-              </p>
+              <p className="text-sm text-slate-500">Aún no hay lecturas registradas.</p>
             )}
           </div>
-
           {/* Stock crítico */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-            <h3 className="font-semibold text-slate-900 mb-2">
-              Insumos en nivel crítico
-            </h3>
+            <h3 className="font-semibold text-slate-900 mb-2">Insumos en nivel crítico</h3>
             {stockCritico.length > 0 ? (
               <ul className="space-y-1 text-sm">
                 {stockCritico.map((ins) => (
@@ -289,12 +273,9 @@ function Home() {
               </p>
             )}
           </div>
-
           {/* Alertas */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-            <h3 className="font-semibold text-slate-900 mb-2">
-              Alertas activas
-            </h3>
+            <h3 className="font-semibold text-slate-900 mb-2">Alertas activas</h3>
             {alertas.length > 0 ? (
               <ul className="space-y-2 text-sm max-h-40 overflow-y-auto">
                 {alertas.map((al) => (
