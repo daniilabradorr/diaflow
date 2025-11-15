@@ -1,5 +1,6 @@
-from django.apps import AppConfig
 import importlib
+
+from django.apps import AppConfig
 
 
 class PacientesConfig(AppConfig):
